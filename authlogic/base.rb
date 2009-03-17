@@ -1,15 +1,22 @@
 # Setup Authlogic
+raise "BOOM"
+plugin 'authlogic', :git => 'git://github.com/cduhard/authlogic.git'
+plugin 'declarative_authorization', :git => 'git://github.com/stffn/declarative_authorization.git'
 
 # add gems to gems.yml
 file_append('config/gems.yml',
-  open("#{SOURCE}/restful_authentication/config/gems.yml").read)
+  open("#{SOURCE}/authlogic/config/gems.yml").read)
 run 'sudo gemtools install'
 
+file_append('config/locales/en.yml',
+  open("#{SOURCE}/authlogic/config/locales/en.yml").read)
+
 # rails gets cranky when this isn't included in the config
-gem 'authlogic'
 generate 'session user_session'
 generate 'rspec_controller user_sessions'
-generate 'scaffold user login:string \
+generate 'scaffold user email:string \
+  first_name:string \
+  last_name:string \
   crypted_password:string \
   password_salt:string \
   persistence_token:string \
@@ -18,7 +25,8 @@ generate 'scaffold user login:string \
   last_login_at:datetime \
   current_login_at:datetime \
   last_login_ip:string \
-  current_login_ip:string'
+  current_login_ip:string \
+  time_zone:string' 
 
 # get rid of the generated templates
 Dir.glob('app/views/users/*.erb').each do |file|
@@ -26,14 +34,16 @@ Dir.glob('app/views/users/*.erb').each do |file|
 end
 run "rm app/views/layouts/users.html.erb"
 
-generate 'controller password_reset'
+generate 'controller password_resets'
 
 route "map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'"
 route "map.login '/login', :controller => 'user_sessions', :action => 'new'"
 route "map.signup '/signup', :controller => 'users', :action => 'new'"
 route 'map.resource :user_session'
 route 'map.resource :account, :controller => "users"'
-route 'map.resources :password_reset'
+route 'map.resources :password_resets'
+route "map.register '/register/:activation_code', :controller => 'activations', :action => 'new'"
+route "map.activate '/activate/:id', :controller => 'activations', :action => 'create'"
 
 # migrations
 file Dir.glob('db/migrate/*_create_users.rb').first,
@@ -46,23 +56,35 @@ file Dir.glob('db/migrate/*_create_users.rb').first,
 end
 
 # controllers
-%w( user_sessions password_reset users ).each do |name|
+%w( activations user_sessions password_resets users ).each do |name|
   file "app/controllers/#{name}_controller.rb",
     open("#{SOURCE}/authlogic/app/controllers/#{name}_controller.rb").read
 end
 
+#declarative authorization
+file "app/config/authorization_rules.rb", open("#{SOURCE}/authlogic/app/views/authorization_rules.rb").read
+
 # views
+type = if yes?("Using haml views?")
+         "haml"
+        else
+          "erb"
+        end
+
 %w(
-  notifier/password_reset_instructions.erb
-  password_reset/edit.html.haml
-  password_reset/new.html.haml
-  user_sessions/new.html.haml
-  users/_form.haml
-  users/edit.html.haml
-  users/new.html.haml
-  users/show.html.haml
+  activations/new.html
+  notifier/password_reset_instructions
+  notifier/activation_confirmation
+  notifier/activation_instructions
+  password_reset/edit.html
+  password_reset/new.html
+  user_sessions/new.html
+  users/_form
+  users/edit.html
+  users/new.html
+  users/show.html
 ).each do |name|
-  file "app/views/#{name}", open("#{SOURCE}/authlogic/app/views/#{name}").read
+  file "app/views/#{name}.#{type}", open("#{SOURCE}/authlogic/app/views/#{name}.#{type}").read
 end
 
 # testing goodies

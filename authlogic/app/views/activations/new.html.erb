@@ -1,0 +1,14 @@
+<div>
+    <h3>Activate your account</h3> 
+  <p>Enter your password and click the activate button below to activate your account.</p>
+  <% labeled_form_for @user, :url => activate_path(@user), :html => { :method => :post} do |f| %>
+    <%= f.error_message_on :base %>
+    <fieldset>  
+      <%= f.password_field :password %>
+      <%= f.password_field :password_confirmation %>  
+    </fieldset>
+    <div class="formactions">
+      <%= f.submit "Activate" %>
+    </div>
+  <% end %>
+</div>

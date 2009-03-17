@@ -1,0 +1,9 @@
+<h1>Edit My User Account</h1>
+ 
+<% labeled_form_for @user, :url => account_path do |f| %>
+  <%= render_error_messages_for_base(@user) %>
+  <%= render :partial => "form", :object => f %>
+  <div class="formactions">
+    <%= f.submit "Update" %>
+  </div>
+<% end %>

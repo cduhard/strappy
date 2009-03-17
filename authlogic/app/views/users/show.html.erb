@@ -1,0 +1,17 @@
+<h2>My Account</h2>
+
+<div>
+
+<p>
+  <b>Email:</b>
+  <%=h @user.email %>
+</p>
+
+<p>
+  <b>Time Zone:</b>
+  <%=h @user.time_zone %>
+</p>
+
+<%= link_to 'Edit', edit_account_path %>
+
+</div>

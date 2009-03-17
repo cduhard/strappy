@@ -1,0 +1,8 @@
+<fieldset>
+  <%= form.text_field :first_name %>
+  <%= form.text_field :last_name %>
+  <%= form.text_field :email %>
+  <%= form.time_zone_select :time_zone, ActiveSupport::TimeZone.all, :default => session[:time_zone] || 'UTC' %>
+  <%= form.password_field :password, :label => form.object.new_record? ? "Password" : "Change password" %>
+  <%= form.password_field :password_confirmation %>
+</fieldset>

@@ -5,8 +5,7 @@ class ApplicationController < ActionController::Base
   helper :all
   helper_method :current_user_session, :current_user
   filter_parameter_logging :password, :password_confirmation
-  before_filter :blackbird_override
-  before_filter :activate_authlogic
+  before_filter :blackbird_override, :set_time_zone
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
@@ -52,5 +51,9 @@ class ApplicationController < ActionController::Base
     def redirect_back_or_default(default)
       redirect_to(session[:return_to] || default)
       session[:return_to] = nil
+    end
+    
+    def set_time_zone
+      Time.zone = current_user.time_zone if current_user.andand.time_zone
     end
 end

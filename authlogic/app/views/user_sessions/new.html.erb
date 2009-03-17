@@ -1,0 +1,20 @@
+<div>
+  <h2>Login</h2>
+  <br/>
+  <div class="center" style="margin-left: 20%">
+    <%= link_to "Forget Password?", new_password_reset_path() %> | <%= link_to "Sign Up for an Account", new_registration_path %>
+  </div>
+  <br/>
+  <% labeled_form_for @user_session, :url => user_session_path do |f| %>
+      <div class="error" style="margin-left: 20%"><%= f.error_message_on :base %></div>
+    <fieldset>
+      <%= f.text_field :email, :required => true %>  
+      <%= f.password_field :password, :required => true %>  
+      <%= f.check_box :remember_me, :label => "Remember Me?", :required => true, :class => "checkbox", :label_class => "checkbox_label", :div => {:class => "remember_center"} %>
+    </fieldset>
+    <div class="formactions">
+      <%= f.submit "Login" %> 
+    </div>
+  <% end %>
+  
+</div>

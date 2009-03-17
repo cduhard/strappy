@@ -1,0 +1,18 @@
+
+  authlogic:
+    error_messages:
+      login_blank: ^Email can't be blank
+      login_not_found: ^Email does not exist.
+      login_invalid: ^Email should use only letters, numbers, spaces, and .-_@ please.
+      email_not_unique: ^Email already taken, choose another.
+      email_required: ^Email can't be blank.
+      email_invalid: ^It should look like an email address.
+      email_too_short_error: ^Email must be more than 5 characters.
+      email_too_long_error: ^Email must be less than 100 characters.      
+      password_blank: ^Password can't be blank
+      password_invalid: ^Password is not valid
+      not_active: Your account is not active
+      not_confirmed: Your account is not confirmed
+      not_approved: Your account is not approved
+      blank_record: You can not login with a blank record
+      new_record: You can not login with a new record
