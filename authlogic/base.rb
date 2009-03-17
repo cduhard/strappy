@@ -1,5 +1,4 @@
 # Setup Authlogic
-raise "BOOM"
 plugin 'authlogic', :git => 'git://github.com/cduhard/authlogic.git'
 plugin 'declarative_authorization', :git => 'git://github.com/stffn/declarative_authorization.git'
 

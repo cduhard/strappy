@@ -97,7 +97,6 @@ rakefile 'strappy.rake', open("#{SOURCE}/common/lib/tasks/strappy.rake").read
   generate("rspec")
   generate("cucumber")
 
-
   inside ('spec') {
     run "mkdir blueprints"
     run "rm -rf fixtures"
