@@ -1,9 +1,6 @@
 # use this for local installs
 SOURCE=ENV['LOCAL'] || 'http://github.com/cduhard/strappy/raw/master'
 
-if yes?("#{SOURCE}")
-end
-
 def file_append(file, data)
   File.open(file, 'a') {|f| f.write(data) }
 end
