@@ -48,9 +48,9 @@ git :add => "."
 git :commit => "-a -m 'Initial commit'"
 
 #region ########### Haml, doing this before gemtools install since we are using 2.1
-haml = false
+haml, type = false, "erb"
 if yes?("Install haml?")
-  haml = true
+  haml, type = true, "haml"
   if `gem list haml | grep 2.1.0`.chomp == ''
     unless File.exist?('tmp/haml')
       inside('tmp') do
@@ -74,7 +74,7 @@ if yes?("Install haml?")
   git :add => "."
   git :commit => "-a -m 'Added Haml and Sass stylesheets'"
 end
-#endregion ###################
+#endregion #########
 
 # GemTools
 file 'config/gems.yml', open("#{SOURCE}/common/config/gems.yml").read
@@ -88,7 +88,7 @@ git :commit => "-a -m 'Added GemTools config'"
 # install strappy rake tasks
 rakefile 'strappy.rake', open("#{SOURCE}/common/lib/tasks/strappy.rake").read
 
-#region ### RSpec/Testing #####
+#region ############## RSpec/Testing  #############
   plugin 'cucumber', :git => 'git://github.com/aslakhellesoy/cucumber.git'
   plugin 'machinist', :git => 'git://github.com/notahat/machinist.git'
   generate("rspec")
@@ -118,7 +118,7 @@ END
 git :add => "."
 git :commit => "-a -m 'Added SiteConfig'"
 
-#region ############### Capistrano ###############
+#region ##### Capistrano    ############
   capify!
   file 'config/deploy.rb', open("#{SOURCE}/common/config/deploy.rb").read
 
@@ -134,7 +134,9 @@ git :commit => "-a -m 'Added SiteConfig'"
   git :commit => "-a -m 'Added Capistrano config'"
 #endregion
 
-#region ############### JQUERY ################### 
+#region ##### JQUERY        ############
+
+puts "Installing Jquery related files......"
   plugin 'jrails', :svn => 'http://ennerchi.googlecode.com/svn/trunk/plugins/jrails'
 
   # remove the installed files, we're using a newer version below
@@ -183,9 +185,10 @@ git :commit => "-a -m 'Added SiteConfig'"
 
   git :add => "."
   git :commit => "-a -m 'Added jQuery with UI and form plugin'"
-#endregion  ################## END JQUERY ########################
+#endregion  ######## END JQUERY ##############
 
-#region ############### Blackbird ################
+#region ##### Blackbird     ############
+puts "Installing Blackbird js files.........."
 run 'mkdir -p public/blackbird'
 file 'public/blackbird/blackbird.js',
   open('http://blackbirdjs.googlecode.com/svn/trunk/blackbird.js').read
@@ -196,10 +199,11 @@ file 'public/blackbird/blackbird.png',
 
 git :add => "."
 git :commit => "-a -m 'Added Blackbird'"
-#endregion ################ END BLACKBIRD #######################
+#endregion ###### END BLACKBIRD #############
 
-#region ############### BLUEPRINT CSS ############
+#region ##### BLUEPRINT CSS ############
 if yes?("Install Blueprint css?")
+  puts "Installing Blueprint CSS files......."
   run "curl -L http://github.com/joshuaclayton/blueprint-css/tarball/master > public/stylesheets/blueprint.tar && tar xf public/stylesheets/blueprint.tar"
   run 'rm public/stylesheets/blueprint.tar'
   blueprint_dir = Dir.entries('.').grep(/blueprint/).first
@@ -208,14 +212,18 @@ if yes?("Install Blueprint css?")
 end
 #endregion
 
-#region ####### Add ApplicationController#######
+#region ##### Add Base App Files ############
+
+# Add ApplicationController#######
+puts "Creating Application Controller....."
 file 'app/controllers/application_controller.rb',
   open("#{SOURCE}/common/app/controllers/application_controller.rb").read
 git :add => "."
 git :commit => "-a -m 'Added ApplicationController'"
-#endregion
 
-#region ####### Add Misc Application Helpers##########
+
+# Add Misc Application Helpers #
+puts "Creating Application Helpers....."
 file 'app/helpers/application_helper.rb',
   open("#{SOURCE}/common/app/helpers/application_helper.rb").read
 file "app/form_builders/labeled_form_builder.rb",
@@ -223,19 +231,23 @@ file "app/form_builders/labeled_form_builder.rb",
 
 git :add => "."
 git :commit => "-a -m 'Added Misc Application Helper'"
-#endregion
 
-#region ###### Add Layout######
-  file 'app/views/layouts/application.html.haml',
-    open("#{SOURCE}/common/app/views/layouts/application.html.haml").read
+
+# Add Layout
+puts "Creating Application Layout....."
+  file "app/views/layouts/application.html.#{type}",
+    open("#{SOURCE}/common/app/views/layouts/application.html.#{type}").read
   git :add => "."
   git :commit => "-a -m 'Added Layout'"
-#endregion
 
-#region #####Remove index.html and add HomeController#####
+
+# remove index.html and add HomeController #
 git :rm => 'public/index.html'
+
+puts "Creating Home Controller"
 generate :rspec_controller, 'home'
 route "map.root :controller => 'home'"
+
 if haml
   file 'app/views/home/index.html.haml', '%h1 Welcome' 
   file "spec/views/home/index.html.haml_spec.rb",
@@ -253,7 +265,9 @@ git :add => "."
 git :commit => "-a -m 'Removed index.html. Added HomeController'"
 #endregion
 
-# ############# Plugins ###############
+#region #####  Plugins      ############
+
+puts "Installing Base Plugins......"
 plugin 'asset_packager', :git => 'git://github.com/sbecker/asset_packager.git'
 plugin 'exception_notifier', :git => 'git://github.com/rails/exception_notification.git'
 plugin 'custom-err-msg', :git => 'git://github.com/gumayunov/custom-err-msg.git'
@@ -265,7 +279,12 @@ plugin 'excessive_support', :git => 'git://github.com/yizzreel/excessive_support
 
 git :add => "."
 git :commit => "-a -m 'Added plugins'"
+#endregion
 
+if yes?("Create database?")
+  puts "Creating databases....."
+  rake "db:create:all"
+end
 
 # Setup Authentication
 templ = case ask(<<-EOQ

@@ -58,4 +58,4 @@ gems:
 
   - name: 'ryanb-scope-builder'
     lib: 'scope_builder'
-    source: 'http://gems.github.com
+    source: 'http://gems.github.com'
