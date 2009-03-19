@@ -27,11 +27,13 @@ file "config/database.yml", <<-FILE
 development:
   adapter: mysql
   database: #{app_name}_development
+  user: root
   encoding: utf8
  
 test:
   adapter: mysql
   database: #{app_name}_test
+  user: root
   encoding: utf8
  
 production:
