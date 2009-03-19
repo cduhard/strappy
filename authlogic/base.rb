@@ -96,14 +96,14 @@ file_inject('/spec/spec_helper.rb',
 # specs
 run 'mkdir -p spec/fixtures'
 
-%w(
-  fixtures/users.yml
-  controllers/application_controller_spec.rb
-  controllers/password_reset_controller_spec.rb
-  controllers/user_sessions_controller_spec.rb
-  controllers/users_controller_spec.rb
-  views/home/index.html.haml_spec.rb
-).each do |name|
+[
+  "fixtures/users.yml",
+  "controllers/application_controller_spec.rb",
+  "controllers/password_reset_controller_spec.rb",
+  "controllers/user_sessions_controller_spec.rb",
+  "controllers/users_controller_spec.rb",
+  "views/home/index.html.#{type}_spec.rb"
+].each do |name|
   file "spec/#{name}", open("#{SOURCE}/authlogic/spec/#{name}").read
 end
 
@@ -118,8 +118,8 @@ git :add => "."
 git :commit => "-a -m 'Added ApplicationController'"
 
 # Application Layout
-file 'app/views/layouts/application.html.haml',
-  open("#{SOURCE}/authlogic/app/views/layouts/application.html.haml").read
+file "app/views/layouts/application.html.#{type}",
+  open("#{SOURCE}/authlogic/app/views/layouts/application.html.#{type}").read
 git :add => "."
 git :commit => "-a -m 'Added Layout'"
 
