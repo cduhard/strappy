@@ -5,7 +5,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :email, :null => false
       t.string :first_name
       t.string :last_name 
-      t.strin :time_zone     
+      t.string :time_zone     
       t.string :crypted_password, :null => false
       t.string :password_salt, :null => false
       t.string :persistence_token, :null => false
